@@ -1,2 +1,2 @@
-# databaseFinalProject
-Database Final Project
+Kaden Valdez
+Aedon Kettles
