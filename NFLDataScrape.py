@@ -95,13 +95,13 @@ class nfl_scrape:
 
         # # Add the full team name before the Team, and Opp Columns
         if 'Home_Full_Name' not in self.nfl_df.columns:
-            self.nfl_df.insert(loc=1, column='Home_Full_Name', value=self.nfl_df['Team_Abr'].replace(abbrev_to_name))
+            self.nfl_df.insert(loc=1, column='Team_Full_Name', value=self.nfl_df['Team_Abr'].replace(abbrev_to_name))
         if 'Opp_Full_Name' not in self.nfl_df.columns:
             self.nfl_df.insert(loc=7, column='Opp_Full_Name', value=self.nfl_df['Opp_Abr'].replace(abbrev_to_name))
         
 
-        # If Current Team Won the Result columm will display a 1
-        self.nfl_df['Game_Result'] = self.nfl_df['Game_Result'].apply(lambda x: 1 if x == 'W' else 0)
+        # # If Current Team Won the Result columm will display a 1
+        # self.nfl_df['Game_Result'] = self.nfl_df['Game_Result'].apply(lambda x: 1 if x == 'W' else 0)
 
         # If the Game went into OT then OT Column will display a 1
         self.nfl_df['Overtime'] = self.nfl_df['Overtime'].apply(lambda x: 1 if x == 'OT' else 0)
@@ -117,3 +117,4 @@ class nfl_scrape:
         self.nfl_df.to_csv('nfl_data.csv', index=False)
 
 nfl = nfl_scrape()
+nfl.clean_gamelogs()
