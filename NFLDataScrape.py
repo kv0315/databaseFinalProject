@@ -75,48 +75,46 @@ class nfl_scrape:
         if (self.nfl_df.shape[1] == 50):
             self.nfl_df = self.nfl_df.drop(self.nfl_df.columns[1], axis=1)    # Removes RK column
             self.nfl_df = self.nfl_df.drop(self.nfl_df.columns[2], axis=1)    # Removes the Gtm Column
-            self.nfl_df = self.nfl_df.drop(self.nfl_df.columns[4], axis=1)    # Removes the day column
 
         # Remove the Seasons Total Stats
         if 'Opp' in self.nfl_df.columns:
             self.nfl_df = self.nfl_df.dropna(subset=['Opp'])
 
-        # # Rename Columns for easier readability
-        column_names = {'Unnamed: 5': 'Home', 'Rslt':'Result', 'Cmp%': 'Completion_Percentage',
-                        'Yds':'Pass_Yards', 'TD':'Pass_TD', 'Y/A':'Pass_YPA', 'AY/A':'Adjusted_YPA', 'Rate': 'Passer_Rating', 'Sk':'Sacks_Taken', 'Yds.1':'Sack_Yards', 
-                        'Att.1':'Rush_Attempts', 'Yds.2':'Rush_Yards', 'TD.1':'Rush_TD', 'Y/A.1':'Rush_YPA', 
-                        'Ply':'Total_Offensive_Plays', 'Tot':'Total_Yards', 'Y/P': 'Yards_Per_Play', 
-                        'FL':'Fumbles_Lost', 'Int':'Interceptions_Thrown', 'TO':'Turnovers', 'ToP':'Time_Of_Posession'}
-        self.nfl_df = self.nfl_df.rename(columns=column_names)
+        # Rename Columns for easier readability
+        # column_names = {'Unnamed: 5': 'Home', 'Rslt':'Result', 'Cmp%': 'Completion_Percentage',
+        #                 'Yds':'Pass_Yards', 'TD':'Pass_TD', 'Y/A':'Pass_YPA', 'AY/A':'Adjusted_YPA', 'Rate': 'Passer_Rating', 'Sk':'Sacks_Taken', 'Yds.1':'Sack_Yards', 
+        #                 'Att.1':'Rush_Attempts', 'Yds.2':'Rush_Yards', 'TD.1':'Rush_TD', 'Y/A.1':'Rush_YPA', 
+        #                 'Ply':'Total_Offensive_Plays', 'Tot':'Total_Yards', 'Y/P': 'Yards_Per_Play', 
+        #                 'FL':'Fumbles_Lost', 'Int':'Interceptions_Thrown', 'TO':'Turnovers', 'ToP':'Time_Of_Posession'}
+        # self.nfl_df = self.nfl_df.rename(columns=column_names)
 
         # Add the full team name before the Team, and Opp Columns
-        if 'Home_Full_Name' not in self.nfl_df.columns:
-            self.nfl_df.insert(loc=1, column='Home_Full_Name', value=self.nfl_df['Team'].replace(abbrev_to_name))
-        if 'Away_Full_Name' not in self.nfl_df.columns:
-            self.nfl_df.insert(loc=6, column='Away_Full_Name', value=self.nfl_df['Opp'].replace(abbrev_to_name))
+        # if 'Home_Full_Name' not in self.nfl_df.columns:
+        #     self.nfl_df.insert(loc=1, column='Home_Full_Name', value=self.nfl_df['Team'].replace(abbrev_to_name))
+        # if 'Away_Full_Name' not in self.nfl_df.columns:
+        #     self.nfl_df.insert(loc=6, column='Away_Full_Name', value=self.nfl_df['Opp'].replace(abbrev_to_name))
 
         # If Current Team Won the Result columm will display a 1
-        self.nfl_df['Result'] = self.nfl_df['Result'].apply(lambda x: 1 if x == 'W' else 0)
+        # self.nfl_df['Result'] = self.nfl_df['Result'].apply(lambda x: 1 if x == 'W' else 0)
 
-        # If the Game went into OT then OT Column will display a 1
-        self.nfl_df['OT'] = self.nfl_df['OT'].apply(lambda x: 1 if x == 'OT' else 0)
+        # # If the Game went into OT then OT Column will display a 1
+        # self.nfl_df['OT'] = self.nfl_df['OT'].apply(lambda x: 1 if x == 'OT' else 0)
 
-        # If the Current Team was the Home Team the Home Column will display a 1
-        self.nfl_df['Home'] = self.nfl_df['Home'].apply(lambda x: 0 if x == '@' else 1)
+        # # If the Current Team was the Home Team the Home Column will display a 1
+        # self.nfl_df['Home'] = self.nfl_df['Home'].apply(lambda x: 0 if x == '@' else 1)
 
         # Correct the Team, and Opp Column Values to Correct Abreviation
-        if 'Team' in self.nfl_df.columns:
-            self.nfl_df = self.nfl_df.rename(columns={'Team': 'Home_Team_Abr'})
-        if 'Opp' in self.nfl_df.columns:
-            self.nfl_df = self.nfl_df.rename(columns={'Opp': 'Away_Team_Abr'})
+        # if 'Team' in self.nfl_df.columns:
+        #     self.nfl_df = self.nfl_df.rename(columns={'Team': 'Home_Team_Abr'})
+        # if 'Opp' in self.nfl_df.columns:
+        #     self.nfl_df = self.nfl_df.rename(columns={'Opp': 'Away_Team_Abr'})
 
-        self.nfl_df['Home_Team_Abr']= self.nfl_df['Home_Team_Abr'].replace(correct_abr)
-        self.nfl_df['Away_Team_Abr'] = self.nfl_df['Away_Team_Abr'].replace(correct_abr)
+        # self.nfl_df['Home_Team_Abr']= self.nfl_df['Home_Team_Abr'].replace(correct_abr)
+        # self.nfl_df['Away_Team_Abr'] = self.nfl_df['Away_Team_Abr'].replace(correct_abr)
 
 
         # Save Cleaned Data Back Into the CSV File
         self.nfl_df.to_csv('databaseFinalProject/nfl_data.csv', index=False)
 
 nfl = nfl_scrape()
-nfl.download_gamelogs()
-# nfl.clean_gamelogs()
+nfl.clean_gamelogs()
