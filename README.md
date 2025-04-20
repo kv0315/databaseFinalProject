@@ -1,5 +1,7 @@
 Kaden Valdez
 Aedon Kettles
+Component 1: 
+
 
 Component 3: 
 - Your choice (Data Scraping and Cleaning Using Python):
