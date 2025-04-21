@@ -1,11 +1,14 @@
 Kaden Valdez
 Aedon Kettles
-Component 1: 
 
-Component 1: Dataset(s)
-Large Dataset: 
-- 7806 Rows
-- 50 Columns
+Component 1: A Large Dataset --DONE
+We chose option 1 "A Large Dataset". Our data came out to 7806 Rows and 50 Columns.
+
+[1] “List of all the pro football franchises,” Pro-Football-Reference, https://www.pro-football-reference.com/teams/ (accessed Apr. 19, 2025). 
+
+
+Our data set fulfills the requirements simply because of the amount of data we have. Although we have a smaller amount of rows (sub 10,000), we have a lot of rows that tell us a lot of information on each team and stats on each game they have played over the past 15 seasons
+
 
 Component 2: Application
 Data Science and Analysis
@@ -17,8 +20,8 @@ Data Science and Analysis
 
 Component 3: Outputs (***NEED 4***)
 - Your choice (Data Scraping and Cleaning Using Python):
-Used 'https://www.pro-football-reference.com/teams/' + {team} + '/' + {season} + '/gamelog/' for every team from 2010 to 2024 to get every game for each team into a dataframe where we would remove incomplete rows, and the season totals row. We would then clean the column names of the data 
-for better read ability because the names are not descriptive. For example the column "Unnamed: 5" correlated to whether that specific game was played at home or away. We also altered the values of the columns "Home", "Result", and "OT" to be binary, so if a team was at Home the corresponding value would be a 1, and away would be a 0. For result a value of 1 would be a win, and a loss would be a 0, finally for the OT (overtime) column a value of 1 says the game went to overtime, and a value 0 says it did not go into overtime. We would also add a column that would add both teams full name rather than just both of their 3 letter abreviations. We would also update all team names and abreviations to the current team name and current team abreviation. For example the "Oakland Raiders" "OAK" with is now "Los Vegas Raiders" "LVR". 
+Used 'https://www.pro-football-reference.com/teams/' + {team} + '/' + {season} + '/gamelog/' for every team from 2010 to 2024 to get every game for each team into a dataframe where we would remove incomplete rows, and the season totals row. 
+We would then clean the column names of the data for better readability because the names are not descriptive. For example the column "Unnamed: 5" correlated to whether that specific game was played at home or away. We also altered the values of the columns "Home", "Result", and "OT" to be binary, so if a team was at Home, variable name isHome, the corresponding value would be a 1, and away would be a 0. For result a value of 1 would be a win, and a loss would be a 0, finally for the OT (overtime) column a value of 1 says the game went to overtime, and a value 0 says it did not go into overtime. We would also add a column that would add both teams full name rather than just both of their 3 letter abreviations. We would also update all team names and abreviations to the current team name and current team abreviation. For example the "Oakland Raiders" "OAK" with is now "Los Vegas Raiders" "LVR". 
 
 - Database Schema Design: 
 CREATE TABLE team (
