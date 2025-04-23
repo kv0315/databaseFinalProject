@@ -81,20 +81,21 @@ class nfl_scrape:
             self.nfl_df = self.nfl_df.dropna(subset=['Opp'])
 
         # Rename Columns for easier readability
-        column_names = {'Opp':'Opp_Abr', 'Pts':'Home_Points_Scored', 'PtsO':'Opp_Points_Scored', 'Result':'Game_Result', 'OT': 'Overtime',
-                        'Cmp':'Pass_Completions', 'Att':'Pass_Attempts', 'Pnt':'Times_Punted', 'Yds.3':'Total_Punt_Yards', 'Pass':'First_Downs_From_Passing',
-                        'Rsh':'First_Downs_From_Rushing', 'Pen':'First_Downs_From_Penalty', '1stD':'Total_First_Downs', '3DConv':'Third_Down_Conversions', '3DAtt':'Thirds_Down_Attempts',
-                        '4DConv':'Fourth_Down_Conversions', '4DAtt':'Fourth_Down_Attempts', 'Pen.1':'Penalties_Commited', 'Yds.4':'Penalty_Yards',
-                        'FGA': 'Field_Goal_Attempts', 'FGM': 'Field_Goals_Made', 'XPA': 'Extra_Point_Attempts', 'XPM':'Extra_Points_Made',
-                        'Unnamed: 5': 'Home', 'Rslt':'Result', 'Cmp%': 'Completion_Percentage',
-                        'Yds':'Pass_Yards', 'TD':'Pass_TD', 'Y/A':'Pass_YPA', 'AY/A':'Adjusted_YPA', 'Rate': 'Passer_Rating', 'Sk':'Sacks_Taken', 'Yds.1':'Sack_Yards', 
-                        'Att.1':'Rush_Attempts', 'Yds.2':'Rush_Yards', 'TD.1':'Rush_TD', 'Y/A.1':'Rush_YPA', 
-                        'Ply':'Total_Offensive_Plays', 'Tot':'Total_Yards', 'Y/P': 'Yards_Per_Play', 
-                        'FL':'Fumbles_Lost', 'Int':'Interceptions_Thrown', 'TO':'Turnovers', 'ToP':'Time_Of_Posession'}
+        # column_names = {'Home': 'is_Home','Opp':'Opp_Abr', 'Pts':'Home_Points_Scored', 'PtsO':'Opp_Points_Scored', 'Result':'Game_Result', 'OT': 'went_to_Overtime',
+        #                 'Cmp':'Pass_Completions', 'Att':'Pass_Attempts', 'Pnt':'Times_Punted', 'Yds.3':'Total_Punt_Yards', 'Pass':'First_Downs_From_Passing',
+        #                 'Rsh':'First_Downs_From_Rushing', 'Pen':'First_Downs_From_Penalty', '1stD':'Total_First_Downs', '3DConv':'Third_Down_Conversions', '3DAtt':'Thirds_Down_Attempts',
+        #                 '4DConv':'Fourth_Down_Conversions', '4DAtt':'Fourth_Down_Attempts', 'Pen.1':'Penalties_Commited', 'Yds.4':'Penalty_Yards',
+        #                 'FGA': 'Field_Goal_Attempts', 'FGM': 'Field_Goals_Made', 'XPA': 'Extra_Point_Attempts', 'XPM':'Extra_Points_Made',
+        #                 'Unnamed: 5': 'Home', 'Rslt':'Result', 'Cmp%': 'Completion_Percentage',
+        #                 'Yds':'Pass_Yards', 'TD':'Pass_TD', 'Y/A':'Pass_YPA', 'AY/A':'Adjusted_YPA', 'Rate': 'Passer_Rating', 'Sk':'Sacks_Taken', 'Yds.1':'Sack_Yards', 
+        #                 'Att.1':'Rush_Attempts', 'Yds.2':'Rush_Yards', 'TD.1':'Rush_TD', 'Y/A.1':'Rush_YPA', 
+        #                 'Ply':'Total_Offensive_Plays', 'Tot':'Total_Yards', 'Y/P': 'Yards_Per_Play', 
+        #                 'FL':'Fumbles_Lost', 'Int':'Interceptions_Thrown', 'TO':'Turnovers', 'ToP':'Time_Of_Posession'}
+        column_names = {'Home':'is_Home', 'Overtime':'went_to_overtime'}
         self.nfl_df = self.nfl_df.rename(columns=column_names)
 
         # # Add the full team name before the Team, and Opp Columns
-        if 'Home_Full_Name' not in self.nfl_df.columns:
+        if 'Team_Full_Name' not in self.nfl_df.columns:
             self.nfl_df.insert(loc=1, column='Team_Full_Name', value=self.nfl_df['Team_Abr'].replace(abbrev_to_name))
         if 'Opp_Full_Name' not in self.nfl_df.columns:
             self.nfl_df.insert(loc=7, column='Opp_Full_Name', value=self.nfl_df['Opp_Abr'].replace(abbrev_to_name))
@@ -104,10 +105,10 @@ class nfl_scrape:
         # self.nfl_df['Game_Result'] = self.nfl_df['Game_Result'].apply(lambda x: 1 if x == 'W' else 0)
 
         # If the Game went into OT then OT Column will display a 1
-        self.nfl_df['Overtime'] = self.nfl_df['Overtime'].apply(lambda x: 1 if x == 'OT' else 0)
+        self.nfl_df['went_to_overtime'] = self.nfl_df['went_to_overtime'].apply(lambda x: 1 if x == 'OT' else 0)
 
         # If the Current Team was the Home Team the Home Column will display a 1
-        self.nfl_df['Home'] = self.nfl_df['Home'].apply(lambda x: 0 if x == '@' else 1)
+        self.nfl_df['is_Home'] = self.nfl_df['is_Home'].apply(lambda x: 0 if x == '@' else 1)
 
         self.nfl_df['Team_Abr']= self.nfl_df['Team_Abr'].replace(correct_abr)
         self.nfl_df['Opp_Abr'] = self.nfl_df['Opp_Abr'].replace(correct_abr)
