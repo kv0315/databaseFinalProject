@@ -61,7 +61,6 @@
 --     team_abr VARCHAR(5) NOT NULL
 -- );
 
-
 -- INSERT INTO team (team_name, team_abr) SELECT DISTINCT Team_Full_Name, Team_Abr FROM nfl_game_stats;
 -------------------------------------------------------------------------------------------------------------
 
@@ -69,32 +68,29 @@
 
 -------------------------------------------------------------------------------------------------------------
 -- Create and insert data into the game_details table
-CREATE TABLE game_details (
-    game_id SERIAL PRIMARY KEY,
-    season INT,
-    week FLOAT,
-    date DATE,
-    is_Home VARCHAR(1),
-    Team_Full_Name INT REFERENCES team(team_name),
-    Opp_Full_Name INT REFERENCES team(team_name),
-    Game_Result VARCHAR(1),
-    went_to_overtime VARCHAR(1),
-    Time_Of_Posession VARCHAR(15),
-    CONSTRAINT chk_different_teams CHECK (team_id <> opp_team_id)
-);
+-- CREATE TABLE game (
+--     game_id SERIAL PRIMARY KEY,
+--     season INT,
+--     week FLOAT,
+--     date DATE,
+--     day VARCHAR(5),
+--     is_Home VARCHAR(1),
+--     Game_Result VARCHAR(1),
+--     Team_Full_Name VARCHAR(50),
+--     Opp_Full_Name VARCHAR(50),
+--     went_to_overtime VARCHAR(1),
+--     Time_Of_Posession VARCHAR(15),
+--     CONSTRAINT chk_different_teams CHECK (Team_Full_Name <> Opp_Full_Name)
+-- );
 
--- INSERT INTO game_details (season, week, date, is_Home, team_id, opp_team_id, Game_Result, went_to_overtime, Time_Of_Posession) 
--- SELECT season, week, date, is_Home, t.team_id AS team_id, opp.team_id AS opp_id,Game_Result, went_to_overtime, Time_Of_Posession FROM nfl_game_stats g
--- JOIN team t ON g.Team_Full_Name = t.team_name
--- JOIN team opp ON g.Opp_Full_Name = opp.team_name
--- ORDER BY team_id, season, week;
-
+-- INSERT INTO game (season, week, date, is_Home, Team_Full_Name, Opp_Full_Name, Game_Result, went_to_overtime, Time_Of_Posession)
+-- SELECT season, week, date, is_Home, Team_Full_Name, Opp_Full_Name, Game_Result, went_to_overtime, Time_Of_Posession FROM nfl_game_stats g;
 -------------------------------------------------------------------------------------------------------------
 -- Create the statline table
 -- CREATE TABLE statline (
 --     stat_id SERIAL PRIMARY KEY,
---     game_id INT REFERENCES game_details(game_id),
---     team_id INT REFERENCES team(team_id),
+--     game_id INT REFERENCES game(game_id),
+--     Team_Full_Name VARCHAR(50),
 --     points_scored INT,
 --     points_allowed INT,
 --     Total_Offensive_Plays INT,
@@ -104,30 +100,13 @@ CREATE TABLE game_details (
 --     Penalty_Yards INT
 -- );
 
--- INSERT INTO statline (
---     game_id, team_id, is_Home, points_scored, points_allowed,
---     Total_Offensive_Plays, Total_Yards, Yards_Per_Play,
---     Penalties_Commited, Penalty_Yards
--- )
--- SELECT 
---     d.game_id,
---     d.team_id,
---     d.opp_team_id
---     d.is_Home,
---     g.Home_Points_Scored,
---     g.Opp_Points_Scored,
---     g.Total_Offensive_Plays,
---     g.Total_Yards,
---     g.Yards_Per_Play,
---     g.Penalties_Commited,
---     g.Penalty_Yards
+-- INSERT INTO statline (game_id, Team_Full_Name, points_scored, points_allowed, Total_Offensive_Plays, Total_Yards, Yards_Per_Play, Penalties_Commited, Penalty_Yards )
+-- SELECT d.game_id, g.Team_Full_Name, g.Home_Points_Scored, g.Opp_Points_Scored, g.Total_Offensive_Plays, g.Total_Yards, g.Yards_Per_Play, g.Penalties_Commited, g.Penalty_Yards
 -- FROM nfl_game_stats g
--- JOIN game_details d ON d.team_id = d.team_id AND d;
+-- JOIN game d ON g.Team_Full_Name = d.Team_Full_Name AND g.Opp_Full_Name = d.Opp_Full_Name AND g.week = d.week AND g.season = d.season
+-- ORDER BY d.game_id;
 
--- SELECT t.team_name, points_scored, points_allowed FROM statline s
--- JOIN team t ON t.team_id = s.team_id
--- WHERE t.team_name = 'Denver Broncos' AND points_allowed > 50;
--- -- Create the rushing_stats table
+-- Create the rushing_stats table
 -- CREATE TABLE rushing_stats (
 --     stat_id INT REFERENCES statline(stat_id),
 --     Rush_Attempts INT,
@@ -135,6 +114,12 @@ CREATE TABLE game_details (
 --     Rush_TD INT,
 --     Rush_YPA FLOAT
 -- );
+
+-- INSERT INTO rushing_stats(stat_id, Rush_Attempts, Rush_Yards, Rush_TD, Rush_YPA)
+-- SELECT s.stat_id, g.Rush_Attempts, g.Rush_Yards, g.Rush_TD, g.Rush_YPA
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play;
+
 
 -- -- Create the passing_stats table
 -- CREATE TABLE passing_stats (
@@ -151,13 +136,24 @@ CREATE TABLE game_details (
 --     Sack_Yards INT
 -- );
 
--- -- Create the turnover_stats table
+-- INSERT INTO passing_stats (stat_id, Pass_Attempts, Pass_Completions, Completion_Percentage, Pass_Yards, Pass_TD, Pass_YPA, Adjusted_YPA, Passer_Rating, Sacks_Taken, Sack_Yards)
+-- SELECT s.stat_id, g.Pass_Attempts, g.Pass_Completions, g.Completion_Percentage, g.Pass_Yards, g.Pass_TD, g.Pass_YPA, g.Adjusted_YPA, g.Passer_Rating, g.Sacks_Taken, g.Sack_Yards
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play
+-- ORDER BY stat_id;
+
+-- Create the turnover_stats table
 -- CREATE TABLE turnover_stats (
 --     stat_id INT REFERENCES statline(stat_id),
 --     Fumbles_Lost INT,
 --     Interceptions_Thrown INT,
 --     turnovers INT
 -- );
+
+-- INSERT INTO turnover_stats (stat_id, Fumbles_Lost, Interceptions_Thrown, Turnovers)
+-- SELECT s.stat_id, g.Fumbles_Lost, g.Interceptions_Thrown, g.Turnovers
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play;
 
 -- -- Create the first_down_stats table
 -- CREATE TABLE first_down_stats (
@@ -168,6 +164,11 @@ CREATE TABLE game_details (
 --     Total_First_Downs INT
 -- );
 
+-- INSERT INTO first_down_stats(stat_id, First_Downs_From_Passing, First_Downs_From_Rushing, First_Downs_From_Penalty, Total_First_Downs)
+-- SELECT s.stat_id, g.First_Downs_From_Passing, g.First_Downs_From_Rushing, g.First_Downs_From_Penalty, g.Total_First_Downs
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play;
+
 -- -- Create the conversion_stats table
 -- CREATE TABLE conversion_stats (
 --     stat_id INT REFERENCES statline(stat_id),
@@ -176,6 +177,11 @@ CREATE TABLE game_details (
 --     Fourth_Down_Conversions INT,
 --     Fourth_Down_Attempts INT
 -- );
+
+-- INSERT INTO conversion_stats(stat_id, Third_Down_Conversions, Thirds_Down_Attempts, Fourth_Down_Conversions, Fourth_Down_Attempts)
+-- SELECT s.stat_id, g.Third_Down_Conversions, g.Thirds_Down_Attempts, g.Fourth_Down_Conversions, g.Fourth_Down_Attempts
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play;
 
 -- -- Create the kicking_stats table
 -- CREATE TABLE kicking_stats (
@@ -187,3 +193,8 @@ CREATE TABLE game_details (
 --     Times_Punted INT,
 --     Total_Punt_Yards INT
 -- );
+
+-- INSERT INTO kicking_stats(stat_id, Field_Goal_Attempts, Field_Goals_Made, Extra_Point_Attempts, Extra_Points_Made, Times_Punted, Total_Punt_Yards)
+-- SELECT s.stat_id, g.Field_Goal_Attempts, g.Field_Goals_Made, g.Extra_Point_Attempts, g.Extra_Points_Made, g.Times_Punted, g.Total_Punt_Yards
+-- FROM nfl_game_stats g
+-- JOIN statline s ON s.Team_Full_Name = g.Team_Full_Name AND s.points_scored = g.Home_Points_Scored AND s.points_allowed = g.Opp_Points_Scored AND s.Total_Yards = g.Total_Yards AND s.Yards_Per_Play = g.Yards_Per_Play;
